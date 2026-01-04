@@ -1,4 +1,5 @@
 import { View, Text, KeyboardAvoidingView } from 'react-native';
+import Checkbox from 'expo-checkbox';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import {useNavigation} from '@react-navigation/native'; 
@@ -6,9 +7,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TextInput } from 'react-native';
 import { useState } from 'react';
 import { ScrollView } from 'react-native';
-import readUserData from '../functions/readUserData';
+import { Keyboard } from 'react-native';
+import readUserData from '../utils/readUserData';
 
 const Profile = () => {
+  const [isChecked, setChecked] = useState(false);
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -18,6 +21,7 @@ const Profile = () => {
   const [isLastNameFocused, setIsLastNameFocused] = useState(false);
   const [isPhoneFocused, setIsPhoneFocused] = useState(false);
   const navigation = useNavigation();
+
   useState(() => {
     const getUserData = async () => {
       const userData = await readUserData();
@@ -36,6 +40,7 @@ const Profile = () => {
       await AsyncStorage.setItem('userLastName', lastName);
       await AsyncStorage.setItem('userEmail', email);
       await AsyncStorage.setItem('userPhone', phone);
+      Keyboard.dismiss();
       console.log('User info saved');
     } catch (error) {
       console.log('Error saving user info:', error);
@@ -101,16 +106,18 @@ const Profile = () => {
                         value={phone}
                         onChangeText={setPhone}
                       />
-                <TouchableOpacity
+            
+
+              
+            </View>
+
+            </ScrollView>
+            <TouchableOpacity
                           style={styles.saveButton}
                           onPress={handleSaveInfo}
                         >
                     <Text style={styles.saveButtonText}>Save Changes</Text>
                 </TouchableOpacity>
-
-              
-            </View>
-            </ScrollView>
             
         </KeyboardAvoidingView>
         <View>
@@ -214,20 +221,31 @@ const styles = StyleSheet.create({
     
   },
   saveButton : {
-    width: '100%',
     alignSelf: 'center',
-    marginTop: 20,
+    width: '90%',
     paddingVertical: 12,
+    paddingHorizontal: 28,
     borderRadius: 8,
     backgroundColor: '#495E57',
     borderColor: 'black',
-    borderWidth: 2
+    borderWidth: 2,
+    marginBottom: 20,
   },
   saveButtonText : {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
-  }
+  },
+  checkboxContainer : {
+    flexDirection: 'row', marginBottom: 20, marginTop: 10
+  },
+  checkbox :{},
+  checkboxText :{
+    fontSize: 14, 
+    color: 'black',
+    alignSelf: 'flex-end'
+
+  },
 });
 export default Profile;
