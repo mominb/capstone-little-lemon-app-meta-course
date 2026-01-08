@@ -5,7 +5,7 @@ import { KeyboardAvoidingView } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Onboarding = () => {
+const Onboarding = ({setIsOnboarded}) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const navigation = useNavigation();
@@ -21,13 +21,13 @@ const Onboarding = () => {
         await AsyncStorage.setItem('userLastName', '');
         await AsyncStorage.setItem('userPhone', '');
         await AsyncStorage.setItem('isOnboarded', 'true');
+        setIsOnboarded('true')
     }
     catch (error){
         console.log('Error saving user info:', error);
     }
     finally { 
         console.log('Finished saving user info');
-        navigation.navigate('Home');
     }
   }
   

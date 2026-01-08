@@ -57,11 +57,6 @@ export async function saveMenuItems(menuItems) {
     console.error("Insert failed:", err);
   }
 
-  try {
-    const rows = await database.getAllAsync("SELECT * FROM menuitems");
-  } catch (err) {
-    console.error("Failed to read table:", err);
-  }
 }
 
 

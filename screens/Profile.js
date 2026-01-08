@@ -10,7 +10,7 @@ import { ScrollView } from 'react-native';
 import { Keyboard } from 'react-native';
 import readUserData from '../utils/readUserData';
 
-const Profile = () => {
+const Profile = ({setIsOnboarded}) => {
   const [isChecked, setChecked] = useState(false);
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -47,13 +47,13 @@ const Profile = () => {
     }
   };
   const handleLogout = async () => {
-    navigation.navigate('Onboarding');
     try {
         await AsyncStorage.clear();
-        navigation.navigate('Onboarding');
+        setIsOnboarded()
         console.log('User data cleared');
+
     } catch (error) {
-        console.log('Error clearing user data')
+        console.log('Error clearing user data', error)
     }  
   };
   return (
