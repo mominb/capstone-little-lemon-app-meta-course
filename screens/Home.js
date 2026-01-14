@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
    searchIcon: {
       height: 30,
       width: 30,
-      marginLeft: "10",
+      marginLeft: 10,
    },
    searchContainer: {
       flexDirection: "row",

@@ -14,14 +14,16 @@ import itemSeperator from "../components/itemSeperator";
 const Cart = ({ getCartItems }) => {
    const navigator = useNavigation();
    const [cartItems, setCartItems] = useState([]);
-   useFocusEffect(() => {
-      const load = async () => {
-         const items = await getCartItems();
-         setCartItems(items);
-      };
+   useFocusEffect(
+      useCallback(() => {
+         const load = async () => {
+            const items = await getCartItems();
+            setCartItems(items);
+         };
 
-      load();
-   });
+         load();
+      }, [getCartItems]),
+   );
    return (
       <SafeAreaView style={styles.container}>
          <View style={styles.header}>

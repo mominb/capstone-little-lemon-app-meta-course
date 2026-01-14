@@ -12,7 +12,9 @@ const Item = ({ route }) => {
       setAmount((prev) => prev + 1);
    };
    const decreaseAmount = () => {
-      setAmount((prev) => prev - 1);
+      if (amount > 1) {
+         setAmount((prev) => prev - 1);
+      }
    };
 
    return (
