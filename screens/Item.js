@@ -54,13 +54,21 @@ const Item = ({ route }) => {
          </View>
          <View style={styles.seperator} />
          <View>
-            <View>
-               <TouchableOpacity onPress={increaseAmount}>
-                  <Text>+</Text>
+            <View style={styles.counterContainer}>
+               <TouchableOpacity
+                  style={styles.CounterButton}
+                  onPress={decreaseAmount}
+               >
+                  <Text style={styles.counterText}>-</Text>
                </TouchableOpacity>
-               <Text>{amount}</Text>
-               <TouchableOpacity onPress={decreaseAmount}>
-                  <Text>-</Text>
+               <Text style={[styles.counterText, { color: "black" }]}>
+                  {amount}
+               </Text>
+               <TouchableOpacity
+                  style={styles.CounterButton}
+                  onPress={increaseAmount}
+               >
+                  <Text style={styles.counterText}>+</Text>
                </TouchableOpacity>
             </View>
             <TouchableOpacity
@@ -145,6 +153,24 @@ const styles = StyleSheet.create({
       fontSize: 16,
       fontWeight: "bold",
       textAlign: "center",
+   },
+   counterContainer: {
+      height: "50%",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+   },
+   CounterButton: {
+      backgroundColor: "grey",
+      width: 40,
+      height: 40,
+      alignItems: "center",
+      borderRadius: 20,
+      margin: 15,
+   },
+   counterText: {
+      color: "white",
+      fontSize: 30,
    },
 });
 

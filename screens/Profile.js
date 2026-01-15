@@ -13,7 +13,7 @@ import {
    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import readUserData from "../utils/readUserData";
+import readUserData from "../utils/asyncStorage";
 
 const Profile = ({ setIsOnboarded }) => {
    const [name, setName] = useState("");

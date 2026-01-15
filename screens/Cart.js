@@ -1,5 +1,5 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
    FlatList,
    Image,
@@ -11,19 +11,18 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import itemSeperator from "../components/itemSeperator";
 
-const Cart = ({ getCartItems }) => {
+const Cart = ({ getCartItems, deleteCartItem }) => {
    const navigator = useNavigation();
    const [cartItems, setCartItems] = useState([]);
-   useFocusEffect(
-      useCallback(() => {
-         const load = async () => {
-            const items = await getCartItems();
-            setCartItems(items);
-         };
+   const load = async () => {
+      const items = await getCartItems();
+      setCartItems(items);
+   };
 
-         load();
-      }, [getCartItems]),
-   );
+   useFocusEffect(() => {
+      load();
+   });
+
    return (
       <SafeAreaView style={styles.container}>
          <View style={styles.header}>
@@ -40,15 +39,43 @@ const Cart = ({ getCartItems }) => {
                style={styles.logoLemon}
             />
          </View>
+
          <Text style={styles.heading}>Your Cart</Text>
+
          <FlatList
-            keyExtractor={(item) => item.item_id}
             data={cartItems}
+            keyExtractor={(item) => String(item.item_id)}
             ItemSeparatorComponent={itemSeperator}
+            contentContainerStyle={styles.listContainer}
             renderItem={({ item }) => (
-               <View>
-                  <Text>{item.name}</Text>
-                  <Text>{item.amount}</Text>
+               <View style={styles.itemContainer}>
+                  <View style={styles.itemInfo}>
+                     <View>
+                        <Text style={styles.itemName}>{item.name}</Text>
+                        <Text style={styles.itemQty}>Qty: {item.amount}</Text>
+                     </View>
+                     <Text style={styles.itemTotal}>
+                        Total: ${item.amount * item.price}
+                     </Text>
+                  </View>
+
+                  <View style={styles.itemActions}>
+                     <Image
+                        source={{
+                           uri: `https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/refs/heads/main/images/${item.image}`,
+                        }}
+                        style={styles.itemImage}
+                     />
+                     <TouchableOpacity
+                        onPress={() => {
+                           deleteCartItem(item.item_id);
+                           load();
+                        }}
+                        style={styles.deleteButton}
+                     >
+                        <Text style={styles.deleteText}>Delete</Text>
+                     </TouchableOpacity>
+                  </View>
                </View>
             )}
          />
@@ -59,6 +86,7 @@ const Cart = ({ getCartItems }) => {
 const styles = StyleSheet.create({
    container: {
       flex: 1,
+      backgroundColor: "#fff",
    },
    header: {
       justifyContent: "flex-start",
@@ -68,7 +96,6 @@ const styles = StyleSheet.create({
       flexDirection: "row",
       padding: 20,
    },
-
    logoLemon: {
       alignSelf: "center",
       marginLeft: 25,
@@ -83,6 +110,58 @@ const styles = StyleSheet.create({
    heading: {
       fontWeight: "bold",
       fontSize: 25,
+      marginHorizontal: 20,
+      marginVertical: 10,
+   },
+   listContainer: {
+      paddingHorizontal: 20,
+      paddingBottom: 20,
+      marginTop: 30,
+   },
+   itemContainer: {
+      backgroundColor: "#f9f9f9",
+      padding: 15,
+      borderRadius: 8,
+   },
+   itemInfo: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 10,
+   },
+   itemName: {
+      fontSize: 16,
+      fontWeight: "600",
+   },
+   itemQty: {
+      fontSize: 14,
+      color: "#555",
+      marginTop: 4,
+   },
+   itemTotal: {
+      fontSize: 15,
+      fontWeight: "600",
+   },
+   itemActions: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+   },
+   itemImage: {
+      width: 60,
+      height: 60,
+      borderRadius: 6,
+      backgroundColor: "grey",
+   },
+   deleteButton: {
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+      backgroundColor: "#e74c3c",
+      borderRadius: 4,
+   },
+   deleteText: {
+      color: "#fff",
+      fontWeight: "600",
    },
 });
 

@@ -1,4 +1,8 @@
-import { useNavigation } from "@react-navigation/native";
+import {
+   useFocusEffect,
+   useIsFocused,
+   useNavigation,
+} from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import {
    FlatList,
@@ -18,23 +22,20 @@ const Home = ({ menuCategories, database }) => {
    const [query, setQuery] = useState("");
    const [data, setData] = useState([]);
    const [activeCategories, setActiveCategories] = useState([]);
+   const [numOfCartItems, setNumOfCartItems] = useState(0);
    const navigation = useNavigation();
 
    const handleFilterSelection = (filter) => {
-      console.log("handleFilterSelection called");
       setActiveCategories((prev) => {
          if (prev.includes(filter)) {
-            console.log("filter removed");
             return prev.filter((c) => c !== filter);
          } else {
-            console.log("filter added");
             return [...prev, filter];
          }
       });
    };
 
    const handleItemPress = (item) => {
-      console.log(item, "pressed");
       navigation.navigate("Item", { item });
    };
 
@@ -52,7 +53,13 @@ const Home = ({ menuCategories, database }) => {
       };
       loadData();
    }, [activeCategories, query, database]);
-
+   useFocusEffect(() => {
+      async function fetchCartItemCount() {
+         const cartItemCount = await database.cartItemCount();
+         setNumOfCartItems(cartItemCount);
+      }
+      fetchCartItemCount();
+   });
    return (
       <SafeAreaView style={styles.container}>
          <View style={styles.header}>
@@ -111,12 +118,20 @@ const Home = ({ menuCategories, database }) => {
                >
                   ORDER FOR DELIVERY!
                </Text>
-               <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+               <TouchableOpacity
+                  style={styles.cartIconContainter}
+                  onPress={() => navigation.navigate("Cart")}
+               >
                   <Image
                      source={require("../assets/shopping-bag-icon.png")}
                      resizeMode="contain"
                      style={styles.cartIcon}
                   />
+                  <View style={styles.cartItemCountContainer}>
+                     <Text style={{ color: "white", fontWeight: "bold" }}>
+                        {numOfCartItems}
+                     </Text>
+                  </View>
                </TouchableOpacity>
             </View>
             <ScrollView horizontal={true}>
@@ -243,14 +258,25 @@ const styles = StyleSheet.create({
       marginBottom: 15,
    },
    cartIcon: {
-      width: 40,
-      height: 40,
+      width: 30,
+      height: 30,
+   },
+   cartIconContainter: {
       backgroundColor: "#F4CE14",
       borderRadius: 18,
       justifyContent: "center",
       alignItems: "center",
       padding: 6,
       marginRight: 20,
+      flexDirection: "row",
+   },
+   cartItemCountContainer: {
+      backgroundColor: "red",
+      width: 20,
+      height: 20,
+      borderRadius: 18,
+      alignItems: "center",
+      justifyContent: "center",
    },
 });
 

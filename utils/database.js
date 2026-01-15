@@ -123,26 +123,6 @@ export async function getMenuItemsInCart() {
    return cartItems;
 }
 
-export async function saveItemToCart(item_id, amount) {
-   const database = await initDB();
-
-   try {
-      await database.execAsync("BEGIN TRANSACTION;");
-      const sql = `
-  INSERT INTO cartitems (item_id, amount)
-  VALUES (?, ?)
-  ON CONFLICT (item_id) DO UPDATE SET
-  amount = amount + excluded.amount
-  `;
-      await database.runAsync(sql, item_id, amount);
-      await database.execAsync("COMMIT;");
-      console.log("Added to cart", item_id, amount);
-   } catch (e) {
-      console.log("Add to cart failed: ", e);
-      await database.execAsync("ROLLBACK;");
-   }
-}
-
 export async function getCategoriesfromDB() {
    const database = await initDB();
    const menu = await database.getAllAsync("SELECT * FROM menuitems");
@@ -159,4 +139,45 @@ export async function isMenuPopulated() {
    const database = await initDB();
    const rows = await database.getAllAsync("SELECT * FROM menuitems");
    return rows.length > 0;
+}
+
+export async function saveItemToCart(item_id, amount) {
+   const database = await initDB();
+
+   try {
+      await database.execAsync("BEGIN TRANSACTION;");
+      const sql = `
+  INSERT INTO cartitems (item_id, amount)
+  VALUES (?, ?)
+  ON CONFLICT (item_id) DO UPDATE SET
+  amount = amount + excluded.amount
+  `;
+      await database.runAsync(sql, item_id, amount);
+      await database.execAsync("COMMIT;");
+   } catch (e) {
+      console.log("Add to cart failed: ", e);
+      await database.execAsync("ROLLBACK;");
+   }
+}
+
+export async function deleteCartItem(item_id) {
+   const database = await initDB();
+   try {
+      await database.execAsync("BEGIN TRANSACTION;");
+      const sql = `
+      DELETE FROM cartitems
+      WHERE item_id = ?;
+      `;
+      await database.runAsync(sql, item_id);
+      await database.execAsync("COMMIT;");
+   } catch (e) {
+      console.log("Deletion from cart failed: ", e);
+      await database.execAsync("ROLLBACK;");
+   }
+}
+
+export async function cartItemCount() {
+   const database = await initDB();
+   const cartItems = await database.getAllAsync("SELECT * FROM cartitems");
+   return cartItems.length;
 }
