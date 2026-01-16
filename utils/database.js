@@ -154,9 +154,11 @@ export async function saveItemToCart(item_id, amount) {
   `;
       await database.runAsync(sql, item_id, amount);
       await database.execAsync("COMMIT;");
+      return { type: "success", message: "Item added to cart" };
    } catch (e) {
       console.log("Add to cart failed: ", e);
       await database.execAsync("ROLLBACK;");
+      return { type: "error", message: "Failed to add item" };
    }
 }
 
@@ -170,9 +172,11 @@ export async function deleteCartItem(item_id) {
       `;
       await database.runAsync(sql, item_id);
       await database.execAsync("COMMIT;");
+      return { type: "success", message: "Item deleted from cart" };
    } catch (e) {
       console.log("Deletion from cart failed: ", e);
       await database.execAsync("ROLLBACK;");
+      return { type: "error", message: "Failed to delete item" };
    }
 }
 

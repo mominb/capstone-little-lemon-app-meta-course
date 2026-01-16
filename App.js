@@ -1,6 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
+import Toast from "react-native-toast-message";
 import Cart from "./screens/Cart";
 import Home from "./screens/Home";
 import Item from "./screens/Item";
@@ -62,6 +63,7 @@ export default function App() {
                </Stack.Screen>
             )}
          </Stack.Navigator>
+         <Toast />
       </NavigationContainer>
    );
 }

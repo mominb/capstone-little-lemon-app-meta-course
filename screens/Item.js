@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import { saveItemToCart } from "../utils/database";
 
 const Item = ({ route }) => {
@@ -72,8 +73,12 @@ const Item = ({ route }) => {
                </TouchableOpacity>
             </View>
             <TouchableOpacity
-               onPress={() => {
-                  saveItemToCart(item.id, amount);
+               onPress={async () => {
+                  const response = await saveItemToCart(item.id, amount);
+                  Toast.show({
+                     type: response.type,
+                     text1: response.message,
+                  });
                   navigator.navigate("Home");
                }}
                style={styles.button}

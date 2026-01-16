@@ -1,5 +1,5 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import {
    FlatList,
    Image,
@@ -9,6 +9,7 @@ import {
    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import itemSeperator from "../components/itemSeperator";
 
 const Cart = ({ getCartItems, deleteCartItem }) => {
@@ -67,8 +68,12 @@ const Cart = ({ getCartItems, deleteCartItem }) => {
                         style={styles.itemImage}
                      />
                      <TouchableOpacity
-                        onPress={() => {
-                           deleteCartItem(item.item_id);
+                        onPress={async () => {
+                           const response = await deleteCartItem(item.item_id);
+                           Toast.show({
+                              type: response.type,
+                              text1: response.message,
+                           });
                            load();
                         }}
                         style={styles.deleteButton}

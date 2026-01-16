@@ -13,6 +13,7 @@ import {
    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import readUserData from "../utils/asyncStorage";
 
 const Profile = ({ setIsOnboarded }) => {
@@ -30,10 +31,10 @@ const Profile = ({ setIsOnboarded }) => {
       const getUserData = async () => {
          const userData = await readUserData();
          if (userData) {
-            setName(userData.name);
-            setLastName(userData.lastName);
-            setEmail(userData.email);
-            setPhone(userData.phone);
+            setName(userData.name ?? "");
+            setLastName(userData.lastName ?? "");
+            setEmail(userData.email ?? "");
+            setPhone(userData.phone ?? "");
          }
       };
       getUserData();
@@ -46,8 +47,16 @@ const Profile = ({ setIsOnboarded }) => {
          await AsyncStorage.setItem("userPhone", phone);
          Keyboard.dismiss();
          console.log("User info saved");
+         Toast.show({
+            type: "success",
+            text1: "Information updated successfully",
+         });
       } catch (error) {
          console.log("Error saving user info:", error);
+         Toast.show({
+            type: "error",
+            text1: "Failed to update information",
+         });
       }
    };
    const handleLogout = async () => {
@@ -55,8 +64,16 @@ const Profile = ({ setIsOnboarded }) => {
          await AsyncStorage.clear();
          setIsOnboarded();
          console.log("User data cleared");
+         Toast.show({
+            type: "success",
+            text1: "You have been logged out",
+         });
       } catch (error) {
          console.log("Error clearing user data", error);
+         Toast.show({
+            type: "error",
+            text1: "Logout failed",
+         });
       }
    };
    return (
