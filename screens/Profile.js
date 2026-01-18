@@ -15,8 +15,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import readUserData from "../utils/asyncStorage";
+import { supabase } from "../utils/supabase";
 
-const Profile = ({ setIsOnboarded }) => {
+const Profile = () => {
    const [name, setName] = useState("");
    const [lastName, setLastName] = useState("");
    const [email, setEmail] = useState("");
@@ -61,15 +62,13 @@ const Profile = ({ setIsOnboarded }) => {
    };
    const handleLogout = async () => {
       try {
-         await AsyncStorage.clear();
-         setIsOnboarded();
-         console.log("User data cleared");
+         await supabase.auth.signOut();
          Toast.show({
             type: "success",
             text1: "You have been logged out",
          });
       } catch (error) {
-         console.log("Error clearing user data", error);
+         console.log("Error logging out:", error);
          Toast.show({
             type: "error",
             text1: "Logout failed",

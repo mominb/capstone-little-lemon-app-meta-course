@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
    Image,
    KeyboardAvoidingView,
@@ -11,29 +10,43 @@ import {
    TouchableOpacity,
    View,
 } from "react-native";
-
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+import { sendEmailOTP, verifyEmailOTP } from "../utils/supabase";
 
-const Onboarding = ({ setIsOnboarded }) => {
-   const [name, setName] = useState("");
+const Onboarding = () => {
    const [email, setEmail] = useState("");
-   const [isNameFocused, setIsNameFocused] = useState(false);
+   const [token, setToken] = useState("");
+   const [isOTPFocused, setIsOTPFocused] = useState(false);
    const [isEmailFocused, setIsEmailFocused] = useState(false);
-   const isNameValid = name.trim() !== "";
    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-   const isFormValid = isNameValid && isEmailValid;
-   const handleSaveAndNavi = async () => {
+   const isOTPValid = /^\d{6}$/.test(token);
+   const isFormValid = isEmailValid && isOTPValid;
+   const sendOTP = async () => {
       try {
-         await AsyncStorage.setItem("userName", name);
          await AsyncStorage.setItem("userEmail", email);
-         await AsyncStorage.setItem("userLastName", "");
-         await AsyncStorage.setItem("userPhone", "");
-         await AsyncStorage.setItem("isOnboarded", "true");
-         setIsOnboarded("true");
+         await sendEmailOTP(email);
+         Toast.show({
+            type: "success",
+            text1: "OTP sent to email.",
+         });
       } catch (error) {
-         console.log("Error saving user info:", error);
+         Toast.show({
+            type: "error",
+            text1: "Failed to send OTP",
+         });
+         console.log("Error sending otp:", error);
       } finally {
-         console.log("Finished saving user info");
+         console.log("Sent otp");
+      }
+   };
+   const verifyOTPandLogin = async () => {
+      try {
+         await verifyEmailOTP(email, token);
+      } catch (error) {
+         console.log("Error verifying otp:", error);
+      } finally {
+         console.log("verified otp");
       }
    };
 
@@ -46,20 +59,9 @@ const Onboarding = ({ setIsOnboarded }) => {
                resizeMode="contain"
             />
          </View>
-         <Text style={styles.title}>Let us get to know you</Text>
+         <Text style={styles.title}>Sign in to Little Lemon</Text>
 
          <ScrollView style={styles.content}>
-            <View>
-               <Text style={styles.label}>First Name</Text>
-               <TextInput
-                  onFocus={() => setIsNameFocused(true)}
-                  onBlur={() => setIsNameFocused(false)}
-                  style={[styles.input, isNameFocused && styles.inputFocused]}
-                  value={name}
-                  onChangeText={setName}
-               />
-            </View>
-
             <View>
                <Text style={styles.label}>Email</Text>
                <TextInput
@@ -72,14 +74,35 @@ const Onboarding = ({ setIsOnboarded }) => {
                   autoCapitalize="none"
                />
             </View>
+            <TouchableOpacity onPress={() => sendOTP(email)}>
+               <Text
+                  style={[
+                     styles.otpButtonText,
+                     !isEmailValid && styles.otpButtonDisabledText,
+                  ]}
+               >
+                  Send OTP
+               </Text>
+            </TouchableOpacity>
+            <View>
+               <Text style={styles.label}>OTP</Text>
+               <TextInput
+                  onFocus={() => setIsOTPFocused(true)}
+                  onBlur={() => setIsOTPFocused(false)}
+                  style={[styles.input, isOTPFocused && styles.inputFocused]}
+                  value={token}
+                  onChangeText={setToken}
+                  keyboardType="number-pad"
+               />
+            </View>
          </ScrollView>
          <KeyboardAvoidingView behavior="padding">
             <TouchableOpacity
                style={[styles.button, !isFormValid && styles.buttonDisabled]}
                disabled={!isFormValid}
-               onPress={handleSaveAndNavi}
+               onPress={() => verifyOTPandLogin(email, token)}
             >
-               <Text style={styles.buttonText}>Next</Text>
+               <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
          </KeyboardAvoidingView>
       </SafeAreaView>
@@ -116,11 +139,10 @@ const styles = StyleSheet.create({
       fontWeight: "bold",
       color: "#EDEFEE",
       marginBottom: 6,
-      marginLeft: 20,
    },
    input: {
       height: 48,
-      width: "90%",
+      width: "100%",
       borderWidth: 2.5,
       borderColor: "#495E57",
       borderRadius: 8,
@@ -134,13 +156,14 @@ const styles = StyleSheet.create({
    },
    button: {
       alignSelf: "center",
-      width: "90%",
+      width: "100%",
       paddingVertical: 12,
       paddingHorizontal: 28,
       borderRadius: 8,
       backgroundColor: "#F4CE14",
       borderColor: "black",
       borderWidth: 2,
+      marginBottom: 10,
    },
    buttonDisabled: {
       opacity: 0.4,
@@ -151,6 +174,15 @@ const styles = StyleSheet.create({
       fontSize: 16,
       fontWeight: "500",
       textAlign: "center",
+   },
+   otpButtonText: {
+      color: "#F4CE14",
+      fontWeight: "bold",
+      alignSelf: "center",
+      marginBottom: 10,
+   },
+   otpButtonDisabledText: {
+      color: "#495E57",
    },
 });
 
