@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Filter from "../components/Filter";
-import itemSeperator from "../components/itemSeperator";
+import ItemSeperator from "../components/ItemSeperator";
 
 const Home = ({ menuCategories, database }) => {
    const [query, setQuery] = useState("");
@@ -145,7 +145,7 @@ const Home = ({ menuCategories, database }) => {
          <FlatList
             keyExtractor={(item) => item.id}
             data={data}
-            ItemSeparatorComponent={itemSeperator}
+            ItemSeparatorComponent={ItemSeperator}
             renderItem={({ item }) => (
                <TouchableOpacity
                   onPress={() => handleItemPress(item)}

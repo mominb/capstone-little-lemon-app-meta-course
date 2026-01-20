@@ -10,8 +10,10 @@ import {
    TouchableOpacity,
    View,
 } from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import OtpTimer from "../components/OtpTimer";
 import { sendEmailOTP, verifyEmailOTP } from "../utils/supabase";
 
 const Onboarding = () => {
@@ -19,39 +21,60 @@ const Onboarding = () => {
    const [token, setToken] = useState("");
    const [isOTPFocused, setIsOTPFocused] = useState(false);
    const [isEmailFocused, setIsEmailFocused] = useState(false);
+   const [isLoading, setIsLoading] = useState(false);
    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
    const isOTPValid = /^\d{6}$/.test(token);
    const isFormValid = isEmailValid && isOTPValid;
+
    const sendOTP = async () => {
+      await AsyncStorage.setItem("userEmail", email);
+      setIsLoading(true);
       try {
-         await AsyncStorage.setItem("userEmail", email);
-         await sendEmailOTP(email);
-         Toast.show({
-            type: "success",
-            text1: "OTP sent to email.",
-         });
-      } catch (error) {
-         Toast.show({
-            type: "error",
-            text1: "Failed to send OTP",
-         });
-         console.log("Error sending otp:", error);
+         const { error } = await sendEmailOTP(email);
+         if (error) {
+            console.log(error.message);
+            Toast.show({
+               type: "error",
+               text1: `Unable to send OTP: ${error.message}`,
+            });
+         } else {
+            Toast.show({
+               type: "success",
+               text1: "Successfully sent OTP to email",
+            });
+         }
       } finally {
-         console.log("Sent otp");
+         setIsLoading(false);
       }
    };
    const verifyOTPandLogin = async () => {
+      setIsLoading(true);
       try {
-         await verifyEmailOTP(email, token);
-      } catch (error) {
-         console.log("Error verifying otp:", error);
+         const { error } = await verifyEmailOTP(email, token);
+         if (error) {
+            console.log(error.message);
+            Toast.show({
+               type: "error",
+               text1: `Unable to verify OTP: ${error.message}`,
+            });
+         } else {
+            Toast.show({
+               type: "success",
+               text1: "Successfully verified OTP",
+            });
+         }
       } finally {
-         console.log("verified otp");
+         setIsLoading(false);
       }
    };
 
    return (
       <SafeAreaView style={styles.container}>
+         <Spinner
+            visible={isLoading}
+            textContent="Loading..."
+            textStyle={{ color: "#fff" }}
+         />
          <View>
             <Image
                source={require("../assets/littlelemon-logo-long-white.jpg")}
@@ -74,16 +97,8 @@ const Onboarding = () => {
                   autoCapitalize="none"
                />
             </View>
-            <TouchableOpacity onPress={() => sendOTP(email)}>
-               <Text
-                  style={[
-                     styles.otpButtonText,
-                     !isEmailValid && styles.otpButtonDisabledText,
-                  ]}
-               >
-                  Send OTP
-               </Text>
-            </TouchableOpacity>
+            {<OtpTimer sendOTP={sendOTP} />}
+
             <View>
                <Text style={styles.label}>OTP</Text>
                <TextInput
@@ -175,14 +190,9 @@ const styles = StyleSheet.create({
       fontWeight: "500",
       textAlign: "center",
    },
-   otpButtonText: {
-      color: "#F4CE14",
-      fontWeight: "bold",
+   otpButton: {
       alignSelf: "center",
       marginBottom: 10,
-   },
-   otpButtonDisabledText: {
-      color: "#495E57",
    },
 });
 

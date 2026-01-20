@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import itemSeperator from "../components/itemSeperator";
+import ItemSeperator from "../components/ItemSeperator";
 
 const Cart = ({ getCartItems, deleteCartItem }) => {
    const navigator = useNavigation();
@@ -46,7 +46,7 @@ const Cart = ({ getCartItems, deleteCartItem }) => {
          <FlatList
             data={cartItems}
             keyExtractor={(item) => String(item.item_id)}
-            ItemSeparatorComponent={itemSeperator}
+            ItemSeparatorComponent={ItemSeperator}
             contentContainerStyle={styles.listContainer}
             renderItem={({ item }) => (
                <View style={styles.itemContainer}>

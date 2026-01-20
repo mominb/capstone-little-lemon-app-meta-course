@@ -12,6 +12,7 @@ import {
    TouchableOpacity,
    View,
 } from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import readUserData from "../utils/asyncStorage";
@@ -26,6 +27,7 @@ const Profile = () => {
    const [isEmailFocused, setIsEmailFocused] = useState(false);
    const [isLastNameFocused, setIsLastNameFocused] = useState(false);
    const [isPhoneFocused, setIsPhoneFocused] = useState(false);
+   const [isLoading, setIsLoading] = useState(false);
    const navigation = useNavigation();
 
    useEffect(() => {
@@ -61,22 +63,32 @@ const Profile = () => {
       }
    };
    const handleLogout = async () => {
+      setIsLoading(true);
       try {
-         await supabase.auth.signOut();
-         Toast.show({
-            type: "success",
-            text1: "You have been logged out",
-         });
-      } catch (error) {
-         console.log("Error logging out:", error);
-         Toast.show({
-            type: "error",
-            text1: "Logout failed",
-         });
+         const { error } = await supabase.auth.signOut();
+         if (error) {
+            console.log("Error logging out:", error);
+            Toast.show({
+               type: "error",
+               text1: "Logout failed",
+            });
+         } else {
+            Toast.show({
+               type: "success",
+               text1: "You have been logged out",
+            });
+         }
+      } finally {
+         setIsLoading(false);
       }
    };
    return (
       <SafeAreaView style={styles.container}>
+         <Spinner
+            visible={isLoading}
+            textContent="Loading..."
+            textStyle={{ color: "#fff" }}
+         />
          <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
                <Image
