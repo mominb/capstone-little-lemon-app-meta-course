@@ -197,7 +197,7 @@ export async function changeItemQtyInCart(item_id, operation) {
    if (operation === "decrease") {
       sql = `UPDATE cartitems
       SET amount = amount - 1
-      WHERE item_id = ? AND amount > 0 `;
+      WHERE item_id = ? AND amount > 1 `;
    }
 
    try {
@@ -210,14 +210,14 @@ export async function changeItemQtyInCart(item_id, operation) {
    }
 }
 
-export async function getTotalCartCost() {
-   const database = await initDB();
-   try {
-      const total = await database.getAllAsync(`
-         SELECT SUM( cartitems.amount * menuitems.price )
-
-         `);
-   } catch (error) {
-      console.log("Error calculating total cose of cart: ", error);
-   }
-}
+// export async function getTotalCartCost() {
+//    const database = await initDB();
+//    try {
+//       const total = await database.getAllAsync(`
+//          SELECT SUM( cartitems.amount * menuitems.price )
+//          FROM cartitems
+//          `);
+//    } catch (error) {
+//       console.log("Error calculating total cose of cart: ", error);
+//    }
+// }
