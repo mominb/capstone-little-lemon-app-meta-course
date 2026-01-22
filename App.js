@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import Cart from "./screens/Cart";
+import Checkout from "./screens/Checkout";
 import Home from "./screens/Home";
 import Item from "./screens/Item";
 import Onboarding from "./screens/Onboarding";
@@ -68,9 +69,11 @@ export default function App() {
                            getCartItems={database.getMenuItemsInCart}
                            deleteCartItem={database.deleteCartItem}
                            changeItemQtyInCart={database.changeItemQtyInCart}
+                           getTotalCartCost={database.getTotalCartCost}
                         />
                      )}
                   </Stack.Screen>
+                  <Stack.Screen name="Checkout" component={Checkout} />
                </>
             ) : (
                <Stack.Screen name="Onboarding">

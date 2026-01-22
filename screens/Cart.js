@@ -11,13 +11,24 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
-const Cart = ({ getCartItems, deleteCartItem, changeItemQtyInCart }) => {
+const Cart = ({
+   getCartItems,
+   deleteCartItem,
+   changeItemQtyInCart,
+   getTotalCartCost,
+}) => {
    const navigator = useNavigation();
    const [cartItems, setCartItems] = useState([]);
    const [totalAmount, setTotalAmount] = useState(0);
    const load = async () => {
       const items = await getCartItems();
       setCartItems(items);
+      const cost = await getTotalCartCost();
+      if (cost) {
+         setTotalAmount(cost.toFixed(2));
+      } else {
+         setTotalAmount(0);
+      }
    };
    const increaseAmount = async (item_id) => {
       await changeItemQtyInCart(item_id, "increase");
@@ -54,7 +65,7 @@ const Cart = ({ getCartItems, deleteCartItem, changeItemQtyInCart }) => {
                         <Text style={styles.itemQty}>Qty: {item.amount}</Text>
                      </View>
                      <Text style={styles.itemTotal}>
-                        Total: ${item.amount * item.price}
+                        Total: ${(item.amount * item.price).toFixed(2)}
                      </Text>
                   </View>
 
@@ -104,7 +115,10 @@ const Cart = ({ getCartItems, deleteCartItem, changeItemQtyInCart }) => {
                <Text style={styles.totalAmountText}>Total amount</Text>
                <Text style={styles.totalAmountText}>${totalAmount}</Text>
             </View>
-            <TouchableOpacity style={styles.checkoutButton}>
+            <TouchableOpacity
+               onPress={() => navigator.navigate("Checkout")}
+               style={styles.checkoutButton}
+            >
                <Text style={styles.checkoutButtonText}>
                   Continue to Checkout
                </Text>
