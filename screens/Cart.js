@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import PageHeader from "../components/PageHeader";
 
 const Cart = ({
    getCartItems,
@@ -42,16 +43,7 @@ const Cart = ({
 
    return (
       <SafeAreaView style={styles.container}>
-         <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigator.goBack()}>
-               <Image
-                  source={require("../assets/back-button.jpg")}
-                  resizeMode="contain"
-                  style={styles.backButton}
-               />
-            </TouchableOpacity>
-            <Text style={styles.heading}>Your Cart</Text>
-         </View>
+         <PageHeader navigator={navigator} heading={"Cart"}></PageHeader>
 
          <FlatList
             data={cartItems}
@@ -141,12 +133,7 @@ const styles = StyleSheet.create({
       flexDirection: "row",
       padding: 20,
    },
-   logoLemon: {
-      alignSelf: "center",
-      marginLeft: 25,
-      width: 200,
-      height: 40,
-   },
+
    backButton: {
       alignSelf: "flex-start",
       width: 48,

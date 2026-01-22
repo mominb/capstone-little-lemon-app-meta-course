@@ -15,6 +15,7 @@ import {
 import Spinner from "react-native-loading-spinner-overlay";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import PageHeader from "../components/PageHeader";
 import readUserData from "../utils/asyncStorage";
 import { supabase } from "../utils/supabase";
 
@@ -28,7 +29,7 @@ const Profile = () => {
    const [isLastNameFocused, setIsLastNameFocused] = useState(false);
    const [isPhoneFocused, setIsPhoneFocused] = useState(false);
    const [isLoading, setIsLoading] = useState(false);
-   const navigation = useNavigation();
+   const navigator = useNavigation();
 
    useEffect(() => {
       const getUserData = async () => {
@@ -89,16 +90,7 @@ const Profile = () => {
             textContent="Loading..."
             textStyle={{ color: "#fff" }}
          />
-         <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-               <Image
-                  source={require("../assets/back-button.jpg")}
-                  resizeMode="contain"
-                  style={styles.backButton}
-               />
-            </TouchableOpacity>
-            <Text style={styles.headerText}> Your Profile</Text>
-         </View>
+         <PageHeader navigator={navigator} heading={"Profile"}></PageHeader>
          <KeyboardAvoidingView behavior="padding" style={styles.content}>
             <ScrollView>
                <View style={styles.profileImageContainer}>
