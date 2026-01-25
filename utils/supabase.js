@@ -63,3 +63,20 @@ export async function getUserData() {
 
    return data;
 }
+
+export async function placeOrder(cartItems, deliveryMethod, paymentMethod) {
+   const orderItems = cartItems.map((item) => ({
+      name: item.name,
+      quantity: item.amount,
+   }));
+   const { error } = await supabase.from("orders").insert([
+      {
+         order_items: orderItems,
+         payment_mode: paymentMethod,
+         delivery_mode: deliveryMethod,
+      },
+   ]);
+   if (error) {
+      console.log("error placing order: ", error);
+   }
+}

@@ -17,7 +17,7 @@ import Toast from "react-native-toast-message";
 import PageHeader from "../components/PageHeader";
 import { getUserData, supabase, updateUserData } from "../utils/supabase";
 
-const Profile = () => {
+const Profile = ({ refreshUserInfo, deleteUserCart }) => {
    const [name, setName] = useState("");
    const [email, setEmail] = useState("");
    const [phone, setPhone] = useState("");
@@ -55,6 +55,7 @@ const Profile = () => {
             type: "success",
             text1: "Information updated successfully",
          });
+         refreshUserInfo();
       } catch (error) {
          console.log("Error saving user info:", error);
          Toast.show({
@@ -79,6 +80,8 @@ const Profile = () => {
                text1: "You have been logged out",
             });
          }
+
+         await deleteUserCart();
       } finally {
          setIsLoading(false);
       }

@@ -223,3 +223,8 @@ export async function getTotalCartCost() {
       console.log("Error calculating total cose of cart: ", error);
    }
 }
+
+export async function deleteAllCartRows() {
+   const database = await initDB();
+   await database.execAsync("DELETE FROM cartitems;");
+}

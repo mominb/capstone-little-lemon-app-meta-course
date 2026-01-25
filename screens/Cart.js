@@ -44,9 +44,13 @@ const Cart = ({
       load();
    });
    const isCheckoutAllowed = userMetaDataExists && cartItems.length > 0;
+
    const handleCheckoutNavi = () => {
       if (isCheckoutAllowed) {
-         navigator.navigate("Checkout");
+         navigator.navigate("Checkout", {
+            cartItems: cartItems,
+            totalAmount: totalAmount,
+         });
       } else {
          if (!userMetaDataExists) {
             Toast.show({
