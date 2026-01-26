@@ -23,11 +23,8 @@ const Home = ({ menuCategories, database }) => {
 
    const handleFilterSelection = (filter) => {
       setActiveCategories((prev) => {
-         if (prev.includes(filter)) {
-            return prev.filter((c) => c !== filter);
-         } else {
-            return [...prev, filter];
-         }
+         if (prev.includes(filter)) return prev.filter((c) => c !== filter);
+         return [...prev, filter];
       });
    };
 
@@ -49,6 +46,7 @@ const Home = ({ menuCategories, database }) => {
       };
       loadData();
    }, [activeCategories, query, database]);
+
    useFocusEffect(() => {
       async function fetchCartItemCount() {
          const cartItemCount = await database.cartItemCount();
@@ -56,43 +54,29 @@ const Home = ({ menuCategories, database }) => {
       }
       fetchCartItemCount();
    });
+
    return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.screen}>
          <View style={styles.header}>
             <Image
                source={require("../assets/logo-long-text.png")}
                resizeMode="contain"
-               style={styles.logoLemon}
+               style={styles.headerLogo}
             />
             <TouchableOpacity onPress={handleProfileIconClick}>
                <Image
                   source={require("../assets/profile-icon.png")}
                   resizeMode="contain"
-                  style={styles.logoProfile}
+                  style={styles.headerProfileIcon}
                />
             </TouchableOpacity>
          </View>
 
-         <View style={styles.introBox}>
-            <View style={{ flexDirection: "row" }}>
-               <View style={styles.introTextContainer}>
-                  <Text style={styles.headerText}>Little Lemon</Text>
-                  <Text style={styles.headerSubText}>Chicago</Text>
-                  <Text style={styles.paragraph}>
-                     We are a family owned Mediterranean restaurant, focused on
-                     traditional recipes served with a modern twist.
-                  </Text>
-               </View>
-               <View>
-                  <Image
-                     source={require("../assets/intro-image.jpg")}
-                     resizeMode="contain"
-                     style={styles.introImage}
-                  />
-               </View>
-            </View>
-
-            <View style={styles.searchContainer}>
+         <View style={styles.searchBarSection}>
+            <TouchableOpacity onPress={() => navigation.navigate("Orders")}>
+               <Text>O</Text>
+            </TouchableOpacity>
+            <View style={styles.searchBar}>
                <Image
                   source={require("../assets/search-icon.png")}
                   style={styles.searchIcon}
@@ -100,46 +84,33 @@ const Home = ({ menuCategories, database }) => {
                <TextInput
                   value={query}
                   onChangeText={setQuery}
-                  style={{ width: "80%", height: "30" }}
+                  style={styles.searchInput}
                />
             </View>
+            <TouchableOpacity
+               style={styles.cartButton}
+               onPress={() => navigation.navigate("Cart")}
+            >
+               <Image
+                  source={require("../assets/shopping-bag-icon.png")}
+                  resizeMode="contain"
+                  style={styles.cartIcon}
+               />
+               <View style={styles.cartBadge}>
+                  <Text style={styles.cartBadgeText}>{numOfCartItems}</Text>
+               </View>
+            </TouchableOpacity>
          </View>
 
-         <View style={{ marginLeft: 20, marginTop: 20 }}>
-            <View
-               style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-               <Text
-                  style={[styles.headerText, { color: "black", fontSize: 17 }]}
-               >
-                  ORDER FOR DELIVERY!
-               </Text>
-               <TouchableOpacity
-                  style={styles.cartIconContainter}
-                  onPress={() => navigation.navigate("Cart")}
-               >
-                  <Image
-                     source={require("../assets/shopping-bag-icon.png")}
-                     resizeMode="contain"
-                     style={styles.cartIcon}
-                  />
-                  <View style={styles.cartItemCountContainer}>
-                     <Text style={{ color: "white", fontWeight: "bold" }}>
-                        {numOfCartItems}
-                     </Text>
-                  </View>
-               </TouchableOpacity>
-            </View>
-            <ScrollView horizontal={true}>
+         <View style={styles.filtersSection}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                <Filter
                   categories={menuCategories}
                   onClick={handleFilterSelection}
                   activeCat={activeCategories}
                />
             </ScrollView>
-            <View
-               style={{ height: 0.5, width: "95%", backgroundColor: "black" }}
-            />
+            <View style={styles.filtersDivider} />
          </View>
 
          <FlatList
@@ -149,38 +120,22 @@ const Home = ({ menuCategories, database }) => {
             renderItem={({ item }) => (
                <TouchableOpacity
                   onPress={() => handleItemPress(item)}
-                  style={{
-                     flexDirection: "row",
-                     padding: 15,
-                     justifyContent: "space-between",
-                  }}
+                  style={styles.itemRow}
                >
-                  <View style={{ width: "60%" }}>
-                     <Text style={{ fontWeight: "bold", fontSize: 20 }}>
-                        {item.name}
-                     </Text>
-                     <Text
-                        style={{ color: "gray", marginTop: 5, marginBottom: 5 }}
-                        numberOfLines={2}
-                     >
+                  <View style={styles.itemTextColumn}>
+                     <Text style={styles.itemTitle}>{item.name}</Text>
+                     <Text style={styles.itemDescription} numberOfLines={2}>
                         {item.description}
                      </Text>
-                     <Text style={{ fontWeight: "bold" }}>${item.price}</Text>
+                     <Text style={styles.itemPrice}>${item.price}</Text>
                   </View>
-                  <View>
-                     <Image
-                        style={{
-                           resizeMode: "fill",
-                           width: "100",
-                           height: "100",
-                           backgroundColor: "gray",
-                           borderRadius: 10,
-                        }}
-                        source={{
-                           uri: `https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/refs/heads/main/images/${item.image}`,
-                        }}
-                     />
-                  </View>
+
+                  <Image
+                     style={styles.itemImage}
+                     source={{
+                        uri: `https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/refs/heads/main/images/${item.image}`,
+                     }}
+                  />
                </TouchableOpacity>
             )}
          />
@@ -189,90 +144,115 @@ const Home = ({ menuCategories, database }) => {
 };
 
 const styles = StyleSheet.create({
-   container: {
+   screen: {
       flex: 1,
    },
+
    header: {
       flexDirection: "row",
       justifyContent: "space-between",
       padding: 20,
    },
-   logoLemon: {
+   headerLogo: {
       width: 200,
       height: 40,
    },
-   logoProfile: {
+   headerProfileIcon: {
       width: 40,
       height: 40,
    },
-   introBox: {
+
+   searchBarSection: {
       backgroundColor: "#495E57",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 20,
    },
-   headerText: {
-      fontSize: 25,
-      fontWeight: "bold",
-      fontFamily: "serif",
-      color: "#F4CE14",
-      marginBottom: 10,
-   },
-   headerSubText: {
-      fontSize: 16,
-      color: "white",
-      fontWeight: "bold",
-   },
-   paragraph: {
-      fontSize: 14,
-      color: "white",
-      marginTop: 10,
-      width: 170,
-   },
-   introTextContainer: {
-      marginTop: 20,
-      marginLeft: 20,
-   },
-   introImage: {
-      width: 105,
-      height: 160,
-      marginTop: 30,
-      marginLeft: 55,
-      borderRadius: 30,
-   },
-   searchIcon: {
-      height: 30,
-      width: 30,
-      marginLeft: 10,
-   },
-   searchContainer: {
+   searchBar: {
       flexDirection: "row",
       backgroundColor: "white",
-      width: "90%",
+      width: "80%",
       height: 40,
       borderRadius: 15,
       alignSelf: "center",
       alignItems: "center",
-      marginTop: 15,
-      marginBottom: 15,
+      marginVertical: 15,
+   },
+   searchIcon: {
+      height: 30,
+      width: 30,
+      borderRadius: 15,
+      marginLeft: 5,
+   },
+   searchInput: {
+      height: 40,
+      width: "60%",
+   },
+
+   cartButton: {
+      backgroundColor: "#F4CE14",
+      borderRadius: 15,
+      justifyContent: "center",
+      alignItems: "center",
+      height: 40,
+      flexDirection: "row",
+
+      paddingHorizontal: 6,
    },
    cartIcon: {
       width: 30,
       height: 30,
    },
-   cartIconContainter: {
-      backgroundColor: "#F4CE14",
-      borderRadius: 18,
-      justifyContent: "center",
-      alignItems: "center",
-      padding: 6,
-      marginRight: 20,
-      flexDirection: "row",
-   },
-   cartItemCountContainer: {
+   cartBadge: {
       backgroundColor: "red",
       width: 20,
       height: 20,
-      borderRadius: 18,
+      borderRadius: 10,
       alignItems: "center",
       justifyContent: "center",
+   },
+   cartBadgeText: {
+      color: "white",
+      fontWeight: "bold",
+   },
+
+   filtersSection: {
+      marginLeft: 20,
+      marginTop: 5,
+   },
+   filtersDivider: {
+      height: 0.5,
+      width: "95%",
+      backgroundColor: "black",
+   },
+
+   itemRow: {
+      flexDirection: "row",
+      padding: 15,
+      justifyContent: "space-between",
+   },
+   itemTextColumn: {
+      width: "60%",
+   },
+   itemTitle: {
+      fontWeight: "bold",
+      fontSize: 20,
+   },
+   itemDescription: {
+      color: "gray",
+      marginTop: 5,
+      marginBottom: 5,
+   },
+   itemPrice: {
+      fontWeight: "bold",
+   },
+   itemImage: {
+      resizeMode: "fill",
+      width: 100,
+      height: 100,
+      backgroundColor: "gray",
+      borderRadius: 10,
    },
 });
 

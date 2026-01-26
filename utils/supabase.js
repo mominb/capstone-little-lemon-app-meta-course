@@ -80,3 +80,28 @@ export async function placeOrder(cartItems, deliveryMethod, paymentMethod) {
       console.log("error placing order: ", error);
    }
 }
+
+export async function getUsersOrders() {
+   const { data: userData } = await supabase.auth.getUser();
+
+   const userId = userData?.user?.id;
+
+   const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("user_id", userId);
+   if (error) {
+      console.log("error retrieving user orders: ", error);
+      return [];
+   }
+   return data;
+}
+
+export async function getAllOrders() {
+   const { data, error } = await supabase.from("orders").select("*");
+   if (error) {
+      console.log("error retrieving user orders: ", error);
+      return [];
+   }
+   return data;
+}

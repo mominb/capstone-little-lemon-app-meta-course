@@ -8,6 +8,7 @@ import Checkout from "./screens/Checkout";
 import Home from "./screens/Home";
 import Item from "./screens/Item";
 import Onboarding from "./screens/Onboarding";
+import OrderInfo from "./screens/OrderInfo";
 import Orders from "./screens/Orders";
 import Profile from "./screens/Profile";
 import { bootstrap } from "./utils/bootstrap";
@@ -99,6 +100,7 @@ export default function App() {
                      )}
                   </Stack.Screen>
                   <Stack.Screen name="Orders" component={Orders} />
+                  <Stack.Screen name="OrderInfo" component={OrderInfo} />
                </>
             ) : (
                <Stack.Screen name="Onboarding">
