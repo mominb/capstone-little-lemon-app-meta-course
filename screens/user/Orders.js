@@ -8,8 +8,8 @@ import {
    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import PageHeader from "../components/PageHeader";
-import { getUsersOrders } from "../utils/supabase";
+import PageHeader from "../../components/PageHeader";
+import { getUsersOrders } from "../../utils/supabase";
 
 const Orders = () => {
    const navigator = useNavigation();

@@ -10,9 +10,9 @@ import {
 import { Dropdown } from "react-native-element-dropdown";
 import Spinner from "react-native-loading-spinner-overlay";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ItemSeperator from "../components/ItemSeperator";
-import PageHeader from "../components/PageHeader";
-import { placeOrder } from "../utils/supabase";
+import ItemSeperator from "../../components/ItemSeperator";
+import PageHeader from "../../components/PageHeader";
+import { placeOrder } from "../../utils/supabase";
 
 const Checkout = ({ route, deleteUserCart }) => {
    const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +30,12 @@ const Checkout = ({ route, deleteUserCart }) => {
    const handleOrderPlacement = async () => {
       setIsLoading(true);
       try {
-         await placeOrder(cartItems, deliveryMethod, paymentMethod);
+         await placeOrder(
+            cartItems,
+            deliveryMethod,
+            paymentMethod,
+            totalAmount,
+         );
          navigator.navigate("Orders");
          await deleteUserCart();
       } catch (error) {

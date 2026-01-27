@@ -3,30 +3,36 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useState } from "react";
 import Spinner from "react-native-loading-spinner-overlay";
 import Toast from "react-native-toast-message";
-import Cart from "./screens/Cart";
-import Checkout from "./screens/Checkout";
-import Home from "./screens/Home";
-import Item from "./screens/Item";
+import AdminHome from "./screens/admin/AdminHome";
+import AdminOrders from "./screens/admin/AdminOrders";
 import Onboarding from "./screens/Onboarding";
-import OrderInfo from "./screens/OrderInfo";
-import Orders from "./screens/Orders";
-import Profile from "./screens/Profile";
+import Cart from "./screens/user/Cart";
+import Checkout from "./screens/user/Checkout";
+import Home from "./screens/user/Home";
+import Item from "./screens/user/Item";
+import OrderInfo from "./screens/user/OrderInfo";
+import Orders from "./screens/user/Orders";
+import Profile from "./screens/user/Profile";
 import { bootstrap } from "./utils/bootstrap";
 import * as database from "./utils/database";
-import { getUserData, supabase } from "./utils/supabase";
+import { getUserData, getUserRole, supabase } from "./utils/supabase";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+   const [userRole, setUserRole] = useState();
    const [loading, SetLoading] = useState(true);
    const [session, setSession] = useState(null);
    const [menuCategories, setMenuCategories] = useState([]);
    const [userMetaDataExists, setUserMetaDataExists] = useState(false);
    const getUserInformation = useCallback(async () => {
-      const data = await getUserData();
+      const userData = await getUserData();
       setUserMetaDataExists(
-         data.user.user_metadata.displayName && data.user.user_metadata.phone,
+         userData.user.user_metadata.displayName &&
+            userData.user.user_metadata.phone,
       );
+      const userRole = await getUserRole();
+      setUserRole(userRole[0].role);
    }, []);
    useEffect(() => {
       const load = async () => {
@@ -55,7 +61,16 @@ export default function App() {
    return (
       <NavigationContainer>
          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {session ? (
+            {!session ? (
+               <Stack.Screen name="Onboarding">
+                  {(props) => <Onboarding {...props} />}
+               </Stack.Screen>
+            ) : userRole === "admin" ? (
+               <>
+                  <Stack.Screen name="AdminHome" component={AdminHome} />
+                  <Stack.Screen name="AdminOrders" component={AdminOrders} />
+               </>
+            ) : (
                <>
                   <Stack.Screen name="Home">
                      {(props) => (
@@ -91,6 +106,7 @@ export default function App() {
                         />
                      )}
                   </Stack.Screen>
+
                   <Stack.Screen name="Checkout">
                      {(props) => (
                         <Checkout
@@ -99,16 +115,14 @@ export default function App() {
                         />
                      )}
                   </Stack.Screen>
+
                   <Stack.Screen name="Orders" component={Orders} />
                   <Stack.Screen name="OrderInfo" component={OrderInfo} />
                </>
-            ) : (
-               <Stack.Screen name="Onboarding">
-                  {(props) => <Onboarding {...props} />}
-               </Stack.Screen>
             )}
          </Stack.Navigator>
          <Toast />
+
          <Spinner
             visible={loading}
             textContent="Loading..."

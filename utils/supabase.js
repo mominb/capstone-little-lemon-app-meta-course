@@ -64,7 +64,12 @@ export async function getUserData() {
    return data;
 }
 
-export async function placeOrder(cartItems, deliveryMethod, paymentMethod) {
+export async function placeOrder(
+   cartItems,
+   deliveryMethod,
+   paymentMethod,
+   total_price,
+) {
    const orderItems = cartItems.map((item) => ({
       name: item.name,
       quantity: item.amount,
@@ -74,6 +79,7 @@ export async function placeOrder(cartItems, deliveryMethod, paymentMethod) {
          order_items: orderItems,
          payment_mode: paymentMethod,
          delivery_mode: deliveryMethod,
+         total_price: total_price,
       },
    ]);
    if (error) {
@@ -103,5 +109,20 @@ export async function getAllOrders() {
       console.log("error retrieving user orders: ", error);
       return [];
    }
+   return data;
+}
+
+export async function getUserRole() {
+   const { data: userData } = await supabase.auth.getUser();
+   const userId = userData?.user?.id;
+   const { data, error } = await supabase
+      .from("user_roles")
+      .select("*")
+      .eq("user_id", userId);
+   if (error) {
+      console.log("error retrieving user orders: ", error);
+      return [];
+   }
+
    return data;
 }

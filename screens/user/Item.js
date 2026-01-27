@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import { saveItemToCart } from "../utils/database";
+import { saveItemToCart } from "../../utils/database";
 
 const Item = ({ route }) => {
    const navigator = useNavigation();
@@ -23,13 +23,13 @@ const Item = ({ route }) => {
          <View style={styles.header}>
             <TouchableOpacity onPress={() => navigator.goBack()}>
                <Image
-                  source={require("../assets/back-button.jpg")}
+                  source={require("../../assets/back-button.jpg")}
                   resizeMode="contain"
                   style={styles.backButton}
                />
             </TouchableOpacity>
             <Image
-               source={require("../assets/logo-long-text.png")}
+               source={require("../../assets/logo-long-text.png")}
                resizeMode="contain"
                style={styles.logoLemon}
             />

@@ -11,8 +11,8 @@ import {
    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Filter from "../components/Filter";
-import ItemSeperator from "../components/ItemSeperator";
+import Filter from "../../components/Filter";
+import ItemSeperator from "../../components/ItemSeperator";
 
 const Home = ({ menuCategories, database }) => {
    const [query, setQuery] = useState("");
@@ -59,13 +59,13 @@ const Home = ({ menuCategories, database }) => {
       <SafeAreaView style={styles.screen}>
          <View style={styles.header}>
             <Image
-               source={require("../assets/logo-long-text.png")}
+               source={require("../../assets/logo-long-text.png")}
                resizeMode="contain"
                style={styles.headerLogo}
             />
             <TouchableOpacity onPress={handleProfileIconClick}>
                <Image
-                  source={require("../assets/profile-icon.png")}
+                  source={require("../../assets/profile-icon.png")}
                   resizeMode="contain"
                   style={styles.headerProfileIcon}
                />
@@ -73,12 +73,9 @@ const Home = ({ menuCategories, database }) => {
          </View>
 
          <View style={styles.searchBarSection}>
-            <TouchableOpacity onPress={() => navigation.navigate("Orders")}>
-               <Text>O</Text>
-            </TouchableOpacity>
             <View style={styles.searchBar}>
                <Image
-                  source={require("../assets/search-icon.png")}
+                  source={require("../../assets/search-icon.png")}
                   style={styles.searchIcon}
                />
                <TextInput
@@ -92,7 +89,7 @@ const Home = ({ menuCategories, database }) => {
                onPress={() => navigation.navigate("Cart")}
             >
                <Image
-                  source={require("../assets/shopping-bag-icon.png")}
+                  source={require("../../assets/shopping-bag-icon.png")}
                   resizeMode="contain"
                   style={styles.cartIcon}
                />

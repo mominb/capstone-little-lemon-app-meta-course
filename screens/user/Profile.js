@@ -14,8 +14,8 @@ import {
 import Spinner from "react-native-loading-spinner-overlay";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import PageHeader from "../components/PageHeader";
-import { getUserData, supabase, updateUserData } from "../utils/supabase";
+import PageHeader from "../../components/PageHeader";
+import { getUserData, supabase, updateUserData } from "../../utils/supabase";
 
 const Profile = ({ refreshUserInfo, deleteUserCart }) => {
    const [name, setName] = useState("");
@@ -98,7 +98,7 @@ const Profile = ({ refreshUserInfo, deleteUserCart }) => {
             <ScrollView>
                <View style={styles.profileImageContainer}>
                   <Image
-                     source={require("../assets/profile-icon.png")}
+                     source={require("../../assets/profile-icon.png")}
                      resizeMode="contain"
                      style={styles.profileImage}
                   />
